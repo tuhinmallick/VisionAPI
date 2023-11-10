@@ -108,17 +108,19 @@ class Inference:
         response = inference.video_inference("path/to/video.mp4", "Summarize the actions in the video.")
         '''
         base64Frames = encode_video(input_video)
-        
+
         PROMPT_MESSAGES = [
             {
                 "role": "user",
                 "content": [
                     prompt,
-                    *map(lambda x: {"image": x, "resize": 768}, base64Frames[0::10]),
+                    *map(
+                        lambda x: {"image": x, "resize": 768}, base64Frames[::10]
+                    ),
                 ],
-            },
+            }
         ]
-        
+
         params = {
             "model": self.gpt_model,
             "messages": PROMPT_MESSAGES,
@@ -234,7 +236,4 @@ class Inference:
                 file=audio_file,
                 response_format=response_format
             )
-        if response_format == "text":
-            return transcript
-        else:
-            return transcript["text"]
+        return transcript if response_format == "text" else transcript["text"]
